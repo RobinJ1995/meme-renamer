@@ -21,7 +21,7 @@ if (!srcFolder) {
         console.log(`# Processing file: ${file}`);
 
         const extension = path.extname(file).toLowerCase();
-        if (!(extension === '.png' || extension === '.jpg')) {
+        if (!['.png', '.jpg', '.jpeg'].includes(extension)) {
           console.log(`- Skipping non-image file: ${file}`);
           continue;
         }
@@ -51,5 +51,6 @@ if (!srcFolder) {
     try {
       await worker.terminate();
     } catch (ex) {}
+    process.exit(0);
   }
 })();
