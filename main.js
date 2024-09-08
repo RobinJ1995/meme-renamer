@@ -1,7 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const { createWorker } = require('tesseract.js');
-const MAX_FILENAME_LENGTH = 255;
+const MAX_FILENAME_LENGTH = 250; // Most filesystems have a limit of 255 characters, but some software seems to fail above 250
 
 const srcFolder = process.argv[2];
 if (!srcFolder) {
@@ -34,9 +34,10 @@ if (!srcFolder) {
         }
 
         const newBaseFilename = text.trim()
-          .replace(/[^a-z0-9]/ig, '-')
-          .replace(/-{2,}/g, '-')
-          .slice(0, MAX_FILENAME_LENGTH - extension.length);
+          .replace(/[^a-z0-9]/ig, '-') // Replace everything that is not alphanumeric with a dash
+          .replace(/-{2,}/g, '-') // Reduce multiple dashes to a single dash
+          .replace(/^-+|-+$/g, '') // Trim leading and trailing dashes
+          .slice(0, MAX_FILENAME_LENGTH - extension.length); // Truncate to MAX_FILENAME_LENGTH
         const newFileName = `${newBaseFilename}${extension}`;
         const newFilePath = path.join(srcFolder, newFileName);
         console.log(`- Renaming "${file}" to "${newFileName}"`);
